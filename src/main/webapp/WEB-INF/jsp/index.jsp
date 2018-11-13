@@ -1,3 +1,4 @@
+<%--suppress ALL --%>
 <!doctype html>
 <html lang="en">
 <head>
@@ -89,13 +90,13 @@
 
 </script>
 <script>
-    $(document).ready(function () {//function initMap() {
+    function initMap() {
         var directionsService = new google.maps.DirectionsService;
         var directionsDisplay = new google.maps.DirectionsRenderer;
 
         var map = new google.maps.Map(document.getElementById('map'), {
             zoom: 13,
-            //maxZoom: 19,
+            maxZoom: 19,
             center: {lat: 10.756456968028788, lng: 106.6851868278552},
             mapTypeId: 'roadmap',
             mapTypeControl: false
@@ -110,10 +111,9 @@
 
         directionsDisplay.setMap(map);
 
-
-
-        var routes = new google.maps.DirectionsRenderer();
         var routesPass = new google.maps.DirectionsRenderer();
+        var routesNotPass = new google.maps.DirectionsRenderer();
+        var routes = new google.maps.DirectionsRenderer();
         var paths = new google.maps.Polyline();
         //autocomplete address
         var start = document.getElementById('start');
@@ -122,12 +122,12 @@
         autoComplete(end, map);
 
         map.addListener('zoom_changed', function () {
-            console.log(map.getZoom());
+            //console.log(map.getZoom());
             getRadiusHeatmap(heatmap, map);
         });
 
         document.getElementById('submit').addEventListener('click', function () {
-            calculateAndDisplayRoute(directionsService, directionsDisplay, map, routes, routesPass, paths);
+            calculateAndDisplayRoute(directionsService, directionsDisplay, map, routesPass, routesNotPass, routes, paths);
         });
 
         var refreshHeatMap = setInterval( function()
@@ -139,10 +139,11 @@
                 map: map
             });
         }, 5000);
-    });
+    }
 
-    function calculateAndDisplayRoute(directionsService, directionsDisplay, map, routes, routesPass, paths) {
+    function calculateAndDisplayRoute(directionsService, directionsDisplay, map, routesPass, routesNotPass, routes, paths) {
         routesPass.setMap(null);
+        routesNotPass.setMap(null);
         routes.setMap(null);
         directionsService.route({
             origin: document.getElementById('start').value,
@@ -151,34 +152,54 @@
             provideRouteAlternatives: true
         }, function(response, status) {
             if (status === 'OK') {
+                var pointJams = getPointJams();
+                var pointJamsNow = [];
+                var pointNotJams = [];
                 for (var i = 0; i< response.routes.length; i++) {
-                    var check = true;
-                    var checkPass = true;
                     paths.setOptions({
-                        strokeWeight: 10,
+                        strokeWeight: 0,
                         path: response.routes[i].overview_path,
-                        map: map
                     });
-                    var point;
-                    var pointJams = getPointJams();
+
                     for(var j = 0; j < pointJams.length; j++) {
-                        if(google.maps.geometry.poly.isLocationOnEdge(pointJams[j], paths, 10e-8)){
-                            point = pointJams[j];
-                            var marker = new google.maps.Marker({
-                                position: point,
-                                draggable: true,
-                                map: map
-                            });
+                        if(google.maps.geometry.poly.isLocationOnEdge(pointJams[j], paths, 10e-5)){
+                            if(pointJamsNow[pointJamsNow.length -1] !== i){
+                                pointJamsNow.push(i);
+                            }
                         }
                         else{
-                            point = new google.maps.LatLng(0, 0);
+                            if(pointNotJams[pointNotJams.length -1] !== i){
+                                pointNotJams.push(i);
+                            }
                         }
                     }
-
-                    if(!google.maps.geometry.poly.isLocationOnEdge(point, paths, 10e-8) && check){
-                        routes.setOptions({
+                }
+                pointNotJams = diffArray(pointJamsNow, pointNotJams);
+                if(pointJamsNow.length >= 2 && pointNotJams.length >= 0){
+                    routesNotPass.setOptions({
+                        directions: response,
+                        routeIndex: pointJamsNow[0],
+                        polylineOptions: {
+                            strokeColor: '#DD4B3E',
+                            strokeOpacity: 0.6,
+                            strokeWeight: 7
+                        },
+                        map: map
+                    });
+                    routes.setOptions({
+                        directions: response,
+                        routeIndex: pointJamsNow[1],
+                        polylineOptions: {
+                            strokeColor: '#DD4B3E',
+                            strokeOpacity: 0.6,
+                            strokeWeight: 7
+                        },
+                        map: map
+                    });
+                    if(pointNotJams.length > 0){
+                        routesPass.setOptions({
                             directions: response,
-                            routeIndex: i,
+                            routeIndex: pointNotJams[0],
                             polylineOptions: {
                                 strokeColor: '#4A89F3',
                                 strokeOpacity: 0.6,
@@ -186,12 +207,33 @@
                             },
                             map: map
                         });
-                        check = false;
                     }
-                    else if(google.maps.geometry.poly.isLocationOnEdge(point, paths, 10e-8) && checkPass){
-                        routesPass.setOptions({
+                }
+                else if(pointNotJams.length >= 2 && pointJamsNow >= 0){
+                    routesPass.setOptions({
+                        directions: response,
+                        routeIndex: pointNotJams[0],
+                        polylineOptions: {
+                            strokeColor: '#4A89F3',
+                            strokeOpacity: 0.6,
+                            strokeWeight: 7
+                        },
+                        map: map
+                    });
+                    routes.setOptions({
+                        directions: response,
+                        routeIndex: pointNotJams[1],
+                        polylineOptions: {
+                            strokeColor: '#4A89F3',
+                            strokeOpacity: 0.6,
+                            strokeWeight: 7
+                        },
+                        map: map
+                    });
+                    if(pointJamsNow > 0){
+                        routesNotPass.setOptions({
                             directions: response,
-                            routeIndex: i,
+                            routeIndex: pointJamsNow[0],
                             polylineOptions: {
                                 strokeColor: '#DD4B3E',
                                 strokeOpacity: 0.6,
@@ -199,8 +241,31 @@
                             },
                             map: map
                         });
-                        checkPass = false;
                     }
+                }
+                else{
+                    console.log('not = 1, pass = 1');
+
+                    routesPass.setOptions({
+                        directions: response,
+                        routeIndex: pointNotJams[0],
+                        polylineOptions: {
+                            strokeColor: '#4A89F3',
+                            strokeOpacity: 0.6,
+                            strokeWeight: 7
+                        },
+                        map: map
+                    });
+                    routesNotPass.setOptions({
+                        directions: response,
+                        routeIndex: pointJamsNow[0],
+                        polylineOptions: {
+                            strokeColor: '#DD4B3E',
+                            strokeOpacity: 0.6,
+                            strokeWeight: 7
+                        },
+                        map: map
+                    });
                 }
                 // marker = new google.maps.Marker({
                 //     position: new google.maps.LatLng(10.756480354521894, 106.68511105529706),
@@ -289,9 +354,22 @@
             stepDisplay.open(map, marker);
         });
     }
+    function diffArray(arr1, arr2) {
+        var newArr = [];
+
+        arr1.forEach(function(val){
+            if(arr2.indexOf(val) < 0) newArr.push(val);
+        });
+
+        arr2.forEach(function(val){
+            if(arr1.indexOf(val) < 0) newArr.push(val);
+        });
+
+        return newArr;
+    }
 </script>
 <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCfMPjAoZW5oKYqW20pavZ6ymZ5vQvbog&libraries=places,visualization,geometry">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCfMPjAoZW5oKYqW20pavZ6ymZ5vQvbog&libraries=places,visualization,geometry&callback=initMap">
 </script>
 </body>
 </html>
