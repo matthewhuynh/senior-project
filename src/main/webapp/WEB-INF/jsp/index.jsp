@@ -162,6 +162,13 @@
                     });
 
                     for(var j = 0; j < pointJams.length; j++) {
+                        var marker = new google.maps.Marker({
+                            position: pointJams[j],
+                            map: map
+                        });
+                        var stepDisplay = new google.maps.InfoWindow();
+                        attachInstructionText(stepDisplay, marker, map);
+
                         if(google.maps.geometry.poly.isLocationOnEdge(pointJams[j], paths, 10e-5)){
                             if(pointJamsNow[pointJamsNow.length -1] !== i){
                                 pointJamsNow.push(i);
@@ -244,28 +251,31 @@
                     }
                 }
                 else{
+                    if(pointNotJams.length === 1){
+                        routesPass.setOptions({
+                            directions: response,
+                            routeIndex: pointNotJams[0],
+                            polylineOptions: {
+                                strokeColor: '#4A89F3',
+                                strokeOpacity: 0.6,
+                                strokeWeight: 7
+                            },
+                            map: map
+                        });
+                    }
+                    if(pointJamsNow.length === 1){
+                        routesNotPass.setOptions({
+                            directions: response,
+                            routeIndex: pointJamsNow[0],
+                            polylineOptions: {
+                                strokeColor: '#DD4B3E',
+                                strokeOpacity: 0.6,
+                                strokeWeight: 7
+                            },
+                            map: map
+                        });
+                    }
                     console.log('not = 1, pass = 1');
-
-                    routesPass.setOptions({
-                        directions: response,
-                        routeIndex: pointNotJams[0],
-                        polylineOptions: {
-                            strokeColor: '#4A89F3',
-                            strokeOpacity: 0.6,
-                            strokeWeight: 7
-                        },
-                        map: map
-                    });
-                    routesNotPass.setOptions({
-                        directions: response,
-                        routeIndex: pointJamsNow[0],
-                        polylineOptions: {
-                            strokeColor: '#DD4B3E',
-                            strokeOpacity: 0.6,
-                            strokeWeight: 7
-                        },
-                        map: map
-                    });
                 }
                 // marker = new google.maps.Marker({
                 //     position: new google.maps.LatLng(10.756480354521894, 106.68511105529706),
@@ -309,11 +319,11 @@
 
     function getPointJams(){
         return [
-            new google.maps.LatLng(10.77910990730577, 106.70211961336622),
+            new google.maps.LatLng(10.77910990730577, 106.70211961336622),//ly tu trong 2 ba trung
             new google.maps.LatLng(10.82084026010509, 106.69395195148627),
             new google.maps.LatLng(10.756480354521894, 106.68511105529706),
             new google.maps.LatLng(10.756429958448201, 106.68526025332699),
-            new google.maps.LatLng(10.800814959119283, 106.66173560388575)
+            new google.maps.LatLng(10.800814959119283, 106.66173560388575)//tran quoc hoang
         ]
     }
     function getPointsHeatMap() {
