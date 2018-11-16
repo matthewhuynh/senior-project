@@ -27,13 +27,25 @@ public class HomeController {
 
     @PostMapping(value = "/getDensity")
     @ResponseBody
-    public String getDensity(){
-        List<DensityEntity> densitiesOfCamera1 = densityRepository.getDensityEntitiesByCamera_Id(1);
-        List<DensityEntity> densitiesOfCamera2 = densityRepository.getDensityEntitiesByCamera_Id(2);
-        List<DensityEntity> densitiesOfCamera3 = densityRepository.getDensityEntitiesByCamera_Id(3);
-        List<DensityEntity> densitiesOfCamera4 = densityRepository.getDensityEntitiesByCamera_Id(4);
+    public HashMap<String, Integer> getDensity(){
+        HashMap<String, Integer> result= new HashMap<>();
 
-        return null;
+//        List<DensityEntity> densitiesOfCamera1 = densityRepository.getDensityEntitiesByCamera_Id(1);
+//        List<DensityEntity> densitiesOfCamera2 = densityRepository.getDensityEntitiesByCamera_Id(2);
+//        List<DensityEntity> densitiesOfCamera3 = densityRepository.getDensityEntitiesByCamera_Id(3);
+//        List<DensityEntity> densitiesOfCamera4 = densityRepository.getDensityEntitiesByCamera_Id(4);
+
+        String cameraHeat1 = cameraRepository.getOne(1).getCoordinate();
+        String cameraHeat2 = cameraRepository.getOne(2).getCoordinate();
+        String cameraHeat3 = cameraRepository.getOne(3).getCoordinate();
+        String cameraHeat4 = cameraRepository.getOne(4).getCoordinate();
+
+        result.put(cameraHeat1, (int )(Math.random() * 4 + 1));
+        result.put(cameraHeat2, (int )(Math.random() * 4 + 1));
+        result.put(cameraHeat3, (int )(Math.random() * 4 + 1));
+        result.put(cameraHeat4, (int )(Math.random() * 4 + 1));
+        System.out.println("Done");
+        return result;
     }
 
     @PostMapping(value = "/getState")

@@ -327,17 +327,39 @@
         ]
     }
     function getPointsHeatMap() {
-        return [
-            {location: new google.maps.LatLng(10.756467508352271, 106.68520560331831), weight: getRandomInt(5)},
-            {location: new google.maps.LatLng(10.800978639350589, 106.66188916035185), weight: getRandomInt(5)},
-            {location: new google.maps.LatLng(10.77910990730577, 106.70211961336622), weight: getRandomInt(5)},
-            {location: new google.maps.LatLng(10.820837625437557, 106.6939700565506), weight: getRandomInt(5)}
+        var points = [];
+        var map = {};
+        $.ajax({
+            type: "POST",
+            url: "/getDensity",
+            success: function(data){
+                for (var key in data){
+                    map[key] = data[key];
+                    // points.push({location: new google.maps.LatLng(Number(latlng[0]), Number(latlng[1])), weight: data[key]});
+                }
+            }
+        });
+        for (var k in map){
+            var latlng = k.split(",");
+            points.push({location: new google.maps.LatLng(Number(latlng[0]), Number(latlng[1])), weight: map[k]});
+        }
+
+
+        console.log(map.toString())
+
+        // return [
+        //     {location: new google.maps.LatLng(10.756467508352271, 106.68520560331831), weight: getRandomInt(5)},
+        //     {location: new google.maps.LatLng(10.800978639350589, 106.66188916035185), weight: getRandomInt(5)},
+        //     {location: new google.maps.LatLng(10.77910990730577, 106.70211961336622), weight: getRandomInt(5)},
+        //     {location: new google.maps.LatLng(10.820837625437557, 106.6939700565506), weight: getRandomInt(5)}
+        // ];
 
             // new google.maps.LatLng(10.756467508352271, 106.68520560331831),//tran hung dao
             // new google.maps.LatLng(10.800978639350589, 106.66188916035185),//tran quoc hoang
             // new google.maps.LatLng(10.77910990730577, 106.70211961336622),//ly tu trong - 2 ba trung
             // new google.maps.LatLng(10.820837625437557, 106.6939700565506)//phan van tri - pham van dong
-        ];
+
+        return points;
     }
 
 
@@ -347,14 +369,7 @@
         autocomplete.setFields(
             ['address_components', 'geometry', 'icon', 'name']);
     }
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
+
     function getRandomInt(max) {
         return Math.floor(Math.random() * Math.floor(max));
     }
