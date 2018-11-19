@@ -104,7 +104,6 @@
 
         var heatmap = new google.maps.visualization.HeatmapLayer({
             data: getPointsHeatMap(),
-            //opacity: 0.7,
             radius: 15,
             map: map
         });
@@ -122,7 +121,6 @@
         autoComplete(end, map);
 
         map.addListener('zoom_changed', function () {
-            //console.log(map.getZoom());
             getRadiusHeatmap(heatmap, map);
         });
 
@@ -132,12 +130,22 @@
 
         var refreshHeatMap = setInterval( function()
         {
-            heatmap.setOptions({
-                data: getPointsHeatMap(),
-                //opacity: 0.7,
-                radius: 15,
-                map: map
+            var points = [];
+            $.ajax({
+                type: "POST",
+                url: "/getDensity",
+                success: function(data){
+                    for (var key in data){
+                        var latlng = key.split(",");
+                        points.push({location: new google.maps.LatLng(Number(latlng[0]), Number(latlng[1])), weight: data[key]});
+                    }
+                    heatmap.setOptions({
+                        data: points,
+                        map: map
+                    });
+                }
             });
+            console.log(points);
         }, 5000);
     }
 
@@ -162,12 +170,13 @@
                     });
 
                     for(var j = 0; j < pointJams.length; j++) {
-                        var marker = new google.maps.Marker({
-                            position: pointJams[j],
-                            map: map
-                        });
-                        var stepDisplay = new google.maps.InfoWindow();
-                        attachInstructionText(stepDisplay, marker, map);
+                        // var marker = new google.maps.Marker({
+                        //     position: pointJams[j],
+                        //     draggable: true,
+                        //     map: map
+                        // });
+                        // var stepDisplay = new google.maps.InfoWindow();
+                        // attachInstructionText(stepDisplay, marker, map);
 
                         if(google.maps.geometry.poly.isLocationOnEdge(pointJams[j], paths, 10e-5)){
                             if(pointJamsNow[pointJamsNow.length -1] !== i){
@@ -277,13 +286,6 @@
                     }
                     console.log('not = 1, pass = 1');
                 }
-                // marker = new google.maps.Marker({
-                //     position: new google.maps.LatLng(10.756480354521894, 106.68511105529706),
-                //     draggable: true,
-                //     map: map
-                // });
-                // var stepDisplay = new google.maps.InfoWindow();
-                // attachInstructionText(stepDisplay, marker, map);
             }
             else if(document.getElementById('start').value.trim() === "" |
                 document.getElementById('end').value.trim() === ""){
@@ -306,46 +308,29 @@
             }
         }
     }
-    // function getData(){
-    //     $.ajax({
-    //         type: "POST",
-    //         url: "/getDensity",
-    //         success: function(data){
-    //             alert(msg);
-    //         }
-    //     });
-    //
-    // }
 
     function getPointJams(){
         return [
-            new google.maps.LatLng(10.77910990730577, 106.70211961336622),//ly tu trong 2 ba trung
-            new google.maps.LatLng(10.82084026010509, 106.69395195148627),
+            new google.maps.LatLng(10.779065114294985, 106.70207401581297),//ly tu trong 2 ba trung
+            new google.maps.LatLng(10.82084026010509, 106.69395195148627),//phan van tri
             new google.maps.LatLng(10.756480354521894, 106.68511105529706),
             new google.maps.LatLng(10.756429958448201, 106.68526025332699),
             new google.maps.LatLng(10.800814959119283, 106.66173560388575)//tran quoc hoang
         ]
     }
     function getPointsHeatMap() {
-        var points = [];
-        var map = {};
+        var points = new google.maps.MVCArray();
         $.ajax({
             type: "POST",
             url: "/getDensity",
             success: function(data){
                 for (var key in data){
-                    map[key] = data[key];
-                    // points.push({location: new google.maps.LatLng(Number(latlng[0]), Number(latlng[1])), weight: data[key]});
+                    var latlng = key.split(",");
+                    points.push({location: new google.maps.LatLng(Number(latlng[0]), Number(latlng[1])), weight: data[key]});
                 }
             }
         });
-        for (var k in map){
-            var latlng = k.split(",");
-            points.push({location: new google.maps.LatLng(Number(latlng[0]), Number(latlng[1])), weight: map[k]});
-        }
 
-
-        console.log(map.toString())
 
         // return [
         //     {location: new google.maps.LatLng(10.756467508352271, 106.68520560331831), weight: getRandomInt(5)},

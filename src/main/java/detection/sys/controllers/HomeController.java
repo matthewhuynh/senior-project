@@ -44,7 +44,7 @@ public class HomeController {
         result.put(cameraHeat2, (int )(Math.random() * 4 + 1));
         result.put(cameraHeat3, (int )(Math.random() * 4 + 1));
         result.put(cameraHeat4, (int )(Math.random() * 4 + 1));
-        System.out.println("Done");
+        System.out.println(result.values().toString());
         return result;
     }
 
