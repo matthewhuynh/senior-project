@@ -36,27 +36,26 @@
 
 <script type="text/javascript">
     window.onload = function() {
-
         var dataPoints = [];
         var chart = new CanvasJS.Chart("chartContainer", {
             theme: "light2", // "light1", "dark1", "dark2"
             title: {
-                text: "Room Temperature"
+                text: "Traffic Congestion"
             },
             axisX: {
                 title: "Time Elapsed (in seconds)",
                 suffix: " s"
             },
             axisY: {
-                title: "Temperature (in °C)",
+                title: "Density (in %)",
                 includeZero: false,
-                valueFormatString: "#,##0.0",
-                suffix: " °C"
+                valueFormatString: "#,##0",
+                suffix: " %"
             },
             data: [{
                 type: "line",
-                xValueFormatString: "After #,##0 s",
-                yValueFormatString: "#,##0.0 °C",
+                xValueFormatString: "#,##0 s",
+                yValueFormatString: "#,##0 %C",
                 dataPoints: dataPoints
             }]
         });
@@ -65,16 +64,16 @@
         var xValue;
         var updateInterval = 2000;
 
-        <c:forEach items="${dataPointsList}" var="dataPoints" varStatus="loop">
+
         <c:forEach items="${dataPoints}" var="dataPoint">
-        yValue = parseFloat("${dataPoint.y}");
-        xValue = parseInt("${dataPoint.x}");
-        dataPoints.push({
-            x : xValue,
-            y : yValue,
-        });
+            yValue = parseFloat("${dataPoint.y}");
+            xValue = parseInt("${dataPoint.x}");
+            dataPoints.push({
+                x: xValue,
+                y: yValue,
+            });
         </c:forEach>
-        </c:forEach>
+
 
         chart.render();
 
