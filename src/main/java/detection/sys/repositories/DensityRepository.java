@@ -10,5 +10,7 @@ import java.util.List;
 
 @Repository
 public interface DensityRepository extends JpaRepository<DensityEntity, Integer> {
+    @Query(value = "select * from density where camera_id = ?1 order by id desc" ,nativeQuery = true)
     public List<DensityEntity> getDensityEntitiesByCamera_Id(int id);
+
 }

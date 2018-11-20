@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+
 @Controller
 public class HomeController {
     @Autowired
@@ -25,33 +26,11 @@ public class HomeController {
         return "index";
     }
 
-    @PostMapping(value = "/getDensity")
-    @ResponseBody
-    public HashMap<String, Integer> getDensity(){
-        HashMap<String, Integer> result= new HashMap<>();
-
-//        List<DensityEntity> densitiesOfCamera1 = densityRepository.getDensityEntitiesByCamera_Id(1);
-//        List<DensityEntity> densitiesOfCamera2 = densityRepository.getDensityEntitiesByCamera_Id(2);
-//        List<DensityEntity> densitiesOfCamera3 = densityRepository.getDensityEntitiesByCamera_Id(3);
-//        List<DensityEntity> densitiesOfCamera4 = densityRepository.getDensityEntitiesByCamera_Id(4);
-
-        String cameraHeat1 = cameraRepository.getOne(1).getCoordinate();
-        String cameraHeat2 = cameraRepository.getOne(2).getCoordinate();
-        String cameraHeat3 = cameraRepository.getOne(3).getCoordinate();
-        String cameraHeat4 = cameraRepository.getOne(4).getCoordinate();
-
-        result.put(cameraHeat1, (int )(Math.random() * 4 + 1));
-        result.put(cameraHeat2, (int )(Math.random() * 4 + 1));
-        result.put(cameraHeat3, (int )(Math.random() * 4 + 1));
-        result.put(cameraHeat4, (int )(Math.random() * 4 + 1));
-        System.out.println(result.values().toString());
-        return result;
-    }
 
     @PostMapping(value = "/getState")
     @ResponseBody
     public String getState(@RequestBody Map<String, Integer> data) throws ParseException {
-        System.out.println(data.toString());
+        //System.out.println(data.toString());
 //        Map<String, Integer> cameraMap1 = new TreeMap<>();
 //        Map<String, Integer> cameraMap2 = new TreeMap<>();
 //        Map<String, Integer> cameraMap3 = new TreeMap<>();
@@ -108,24 +87,3 @@ public class HomeController {
         return null;
     }
 }
-
-
-
-//Camera 1:
-
-
-
-
-
-//Camera 2:
-
-
-
-
-
-//Camera 3:
-
-
-
-
-//Camera 4:

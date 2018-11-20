@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CameraRepository extends JpaRepository<CameraEntity, Integer> {
+    public CameraEntity getCameraEntitiesByCoordinate(String coor);
 }
