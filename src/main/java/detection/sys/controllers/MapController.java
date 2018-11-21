@@ -44,7 +44,7 @@ public class MapController {
         DensityEntity densityEntity = densitiesOfCamera1.get(0);
 
         int minute = (int) ((new Date().getTime() - densityEntity.getDateTime().getTime())/1000/60);
-        if(minute >10){
+        if(minute <5){
             result.put(cameraHeat1, n[random.nextInt(n.length)]);
             result.put(cameraHeat2, n[random.nextInt(n.length)]);
             result.put(cameraHeat3, n[random.nextInt(n.length)]);

@@ -27,10 +27,6 @@
         <div class="navbar-header">
             <a class="navbar-brand" style="color: white;"><strong>Traffic Congestion Detection</strong></a>
         </div>
-        <ul class="nav navbar-nav">
-            <li class="active"><a href="/" style="font-weight: 600;font-size: 15px;">Map</a></li>
-            <li ><a href="#" style="font-weight: 600; font-size: 15px;">Chart</a></li>
-        </ul>
     </div>
 </nav>
 
@@ -135,25 +131,25 @@
             calculateAndDisplayRoute(directionsService, directionsDisplay, map, routesPass, routesNotPass, routes, paths);
         });
 
-        // var refreshHeatMap = setInterval( function()
-        // {
-        //     var points = [];
-        //     $.ajax({
-        //         type: "POST",
-        //         url: "/getDensity",
-        //         success: function(data){
-        //             for (var key in data){
-        //                 var latlng = key.split(",");
-        //                 points.push({location: new google.maps.LatLng(Number(latlng[0]), Number(latlng[1])), weight: data[key]});
-        //             }
-        //             heatmap.setOptions({
-        //                 data: points,
-        //                 map: map
-        //             });
-        //         }
-        //     });
-        //     console.log(points);
-        // }, 5000);
+        var refreshHeatMap = setInterval( function()
+        {
+            var points = [];
+            $.ajax({
+                type: "POST",
+                url: "/getDensity",
+                success: function(data){
+                    for (var key in data){
+                        var latlng = key.split(",");
+                        points.push({location: new google.maps.LatLng(Number(latlng[0]), Number(latlng[1])), weight: data[key]});
+                    }
+                    heatmap.setOptions({
+                        data: points,
+                        map: map
+                    });
+                }
+            });
+            console.log(points);
+        }, 5000);
     }
 
 
