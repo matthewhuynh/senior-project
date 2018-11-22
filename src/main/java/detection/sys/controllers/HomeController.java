@@ -30,7 +30,7 @@ public class HomeController {
     @PostMapping(value = "/getState")
     @ResponseBody
     public String getState(@RequestBody Map<String, Integer> data) throws ParseException {
-        //System.out.println(data.toString());
+        System.out.println(data.toString());
 //        Map<String, Integer> cameraMap1 = new TreeMap<>();
 //        Map<String, Integer> cameraMap2 = new TreeMap<>();
 //        Map<String, Integer> cameraMap3 = new TreeMap<>();
@@ -47,11 +47,12 @@ public class HomeController {
 //        CameraEntity camera4 = new CameraEntity("Tran Quoc Hoang _ Hoang Van Thu", "10.800814959119283, 106.66173560388575");
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //
+        String stringSplit = "__";
         for(String key: data.keySet()){
             if(key.contains("camera1")){
                 //cameraMap1.put(key, data.get(key));
 
-                String time = key.split("_")[1];
+                String time = key.split(stringSplit)[1];
 
                 Date dateTime = dateFormat.parse(time);
 
@@ -61,7 +62,7 @@ public class HomeController {
             }
             else if(key.contains("camera2")) {
                 //cameraMap2.put(key, data.get(key));
-                String time = key.split("_")[1];
+                String time = key.split(stringSplit)[1];
                 Date dateTime = dateFormat.parse(time);
 
                 DensityEntity density= new DensityEntity(dateTime, data.get(key), camera2);
@@ -69,7 +70,7 @@ public class HomeController {
             }
             else if(key.contains("camera3")) {
                 //cameraMap3.put(key, data.get(key));
-                String time = key.split("_")[1];
+                String time = key.split(stringSplit)[1];
                 Date dateTime = dateFormat.parse(time);
 
                 DensityEntity density= new DensityEntity(dateTime, data.get(key), camera3);
@@ -77,7 +78,7 @@ public class HomeController {
             }
             else if(key.contains("camera4")) {
                 //cameraMap4.put(key, data.get(key));
-                String time = key.split("_")[1];
+                String time = key.split(stringSplit)[1];
                 Date dateTime = dateFormat.parse(time);
 
                 DensityEntity density= new DensityEntity(dateTime, data.get(key), camera4);
