@@ -31,10 +31,7 @@ public class HomeController {
     @ResponseBody
     public String getState(@RequestBody Map<String, Integer> data) throws ParseException {
         System.out.println(data.toString());
-//        Map<String, Integer> cameraMap1 = new TreeMap<>();
-//        Map<String, Integer> cameraMap2 = new TreeMap<>();
-//        Map<String, Integer> cameraMap3 = new TreeMap<>();
-//        Map<String, Integer> cameraMap4 = new TreeMap<>();
+
         CameraEntity camera1 = cameraRepository.findById(1).get();
         CameraEntity camera2 = cameraRepository.findById(2).get();
         CameraEntity camera3 = cameraRepository.findById(3).get();
@@ -46,12 +43,12 @@ public class HomeController {
 //        CameraEntity camera3 = new CameraEntity("Nguyen Van Cu _ Tran Hung Dao", "10.75648002498592, 106.68511004962215");//(10.756429958448201, 106.68526025332699)
 //        CameraEntity camera4 = new CameraEntity("Tran Quoc Hoang _ Hoang Van Thu", "10.800814959119283, 106.66173560388575");
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//
-        String stringSplit = "__";
+
+        // _ : camera 1
+        //__ : camera
+        String stringSplit = "_";
         for(String key: data.keySet()){
             if(key.contains("camera1")){
-                //cameraMap1.put(key, data.get(key));
-
                 String time = key.split(stringSplit)[1];
 
                 Date dateTime = dateFormat.parse(time);
@@ -61,7 +58,6 @@ public class HomeController {
 
             }
             else if(key.contains("camera2")) {
-                //cameraMap2.put(key, data.get(key));
                 String time = key.split(stringSplit)[1];
                 Date dateTime = dateFormat.parse(time);
 
@@ -69,7 +65,6 @@ public class HomeController {
                 densityRepository.save(density);
             }
             else if(key.contains("camera3")) {
-                //cameraMap3.put(key, data.get(key));
                 String time = key.split(stringSplit)[1];
                 Date dateTime = dateFormat.parse(time);
 
@@ -77,7 +72,6 @@ public class HomeController {
                 densityRepository.save(density);
             }
             else if(key.contains("camera4")) {
-                //cameraMap4.put(key, data.get(key));
                 String time = key.split(stringSplit)[1];
                 Date dateTime = dateFormat.parse(time);
 

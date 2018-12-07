@@ -19,14 +19,94 @@
     <script src="webjars/jquery/3.3.1-1/jquery.min.js"></script>
     <script src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+    <style>
+        @media only screen and (min-width: 992px) {
+            html, body {
+                height: 100%;
+            }
+            #map {
+                height: 94.5%;
+            }
+            #submit{
+                width: 80px;
+                text-align: center;
+                font-weight: bold;
+            }
 
+            #floating-panel {
+                position: absolute;
+                width: 300px;
+                top: 56px;
+                left: 9px;
+                z-index: 5;
+                background-color: #fff;
+                padding: 5px;
+                border: 1px solid #999;
+                text-align: center;
+                font-family: 'Roboto','sans-serif';
+                line-height: 20px;
+                padding-left: 5px;
+                display: none;
+            }
+            .navbar .container-fluid>.navbar-header {
+                float: left;
+                margin-right: 10px;
+            }
+            .navbar .navbar-nav {
+                float: left;
+            }
+            .nav>li > a{
+                float: left;
+            }
+            #find{
+                font-size: 16px;
+                margin-top: 7px;
+            }
+
+        }
+        @media only screen and (max-width: 991px) and (min-width: 769px) {
+            #map {
+                height: 94.5%;
+            }
+            #find{
+                margin-top: 7px;
+                font-size:16px;
+            }
+        }
+
+        @media only screen and (max-width: 768px) {
+            /* For mobile phones: */
+            #find{
+                font-size:16px;
+            }
+            #map {
+                height: 94.5%;
+            }
+        }
+        @media only screen and (max-width: 600px) {
+            #find{
+                font-size:13px;
+            }
+            #map {
+                height: 95%;
+            }
+            .navbar-brand{
+                font-size: 15px;
+            }
+        }
+
+    </style>
 </head>
 <body>
-<nav class="navbar navbar-inverse navbar-fixed-top">
+<nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
             <a class="navbar-brand" style="color: white;"><strong>Traffic Congestion Detection</strong></a>
         </div>
+        <ul class="nav navbar-nav">
+            <button id="find" class="btn btn-md btn-default"
+                    style="" onclick="findDirection()"><strong>Find Path</strong></button>
+        </ul>
     </div>
 </nav>
 
@@ -39,7 +119,17 @@
 <div id="map"></div>
 
 <script>
+    function findDirection(){
+        var findPanel = document.getElementById("floating-panel");
+        if(findPanel.style.display === "none"){
+            findPanel.style.display = "block";
+        }
+        else{
+            findPanel.style.display = "none";
+        }
+    }
     function initMap() {
+        document.getElementById("find").click();
         var directionsService = new google.maps.DirectionsService;
         var directionsDisplay = new google.maps.DirectionsRenderer;
 
@@ -54,13 +144,15 @@
         var heatmap = new google.maps.visualization.HeatmapLayer({
             data: getPointsHeatMap(),
             radius: 15,
-            map: map
+            maxIntensity: 30,
+            map: map,
+            opacity: 0.9999999
         });
 
         var circlePoints = getCirclePoint();
 
         var circle1 = new google.maps.Circle({
-            strokeColor:'#FFFFFF',
+            strokeColor:'#FA8072',
             strokeOpacity: 0,
             strokeWeight: 0,
             fillOpacity: 0,
@@ -69,7 +161,7 @@
             radius: 180
         });
         var circle2 = new google.maps.Circle({
-            strokeColor:'#FFFFFF',
+            strokeColor:'#FA8072',
             strokeOpacity: 0,
             strokeWeight: 0,
             fillOpacity: 0,
@@ -78,7 +170,7 @@
             radius: 180
         });
         var circle3 = new google.maps.Circle({
-            strokeColor:'#FFFFFF',
+            strokeColor:'#FA8072',
             strokeOpacity: 0,
             strokeWeight: 0,
             fillOpacity: 0,
@@ -87,7 +179,7 @@
             radius: 180
         });
         var circle4 = new google.maps.Circle({
-            strokeColor:'#FFFFFF',
+            strokeColor:'#FA8072',
             strokeOpacity: 0,
             strokeWeight: 0,
             fillOpacity: 0,
@@ -128,7 +220,7 @@
         });
 
         document.getElementById('submit').addEventListener('click', function () {
-            calculateAndDisplayRoute(directionsService, directionsDisplay, map, routesPass, routesNotPass, routes, paths);
+            calculateAndDisplayRoute(directionsService, map, routesPass, routesNotPass, routes, paths);
         });
 
         var refreshHeatMap = setInterval( function()
@@ -146,6 +238,9 @@
                         data: points,
                         map: map
                     });
+                },
+                error: function () {
+                    heatmap.setMap(null);
                 }
             });
             console.log(points);
@@ -153,7 +248,7 @@
     }
 
 
-    function calculateAndDisplayRoute(directionsService, directionsDisplay, map, routesPass, routesNotPass, routes, paths) {
+    function calculateAndDisplayRoute(directionsService, map, routesPass, routesNotPass, routes, paths) {
         routesPass.setMap(null);
         routesNotPass.setMap(null);
         routes.setMap(null);
@@ -170,7 +265,7 @@
                 for (var i = 0; i< response.routes.length; i++) {
                     paths.setOptions({
                         strokeWeight: 0,
-                        path: response.routes[i].overview_path,
+                        path: response.routes[i].overview_path
                     });
 
                     for(var j = 0; j < pointJams.length; j++) {
@@ -337,7 +432,11 @@
                 for (var key in data){
                     var latlng = key.split(",");
                     points.push({location: new google.maps.LatLng(Number(latlng[0]), Number(latlng[1])), weight: data[key]});
+                    points.push(new google.maps.LatLng(Number(latlng[0]), Number(latlng[1])));
                 }
+            },
+            error: function () {
+                heatmap.setMap(null);
             }
         });
         return points;
