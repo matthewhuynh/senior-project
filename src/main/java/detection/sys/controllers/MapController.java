@@ -41,10 +41,10 @@ public class MapController {
         String cameraHeat3 = cameraRepository.getOne(3).getCoordinate();
         String cameraHeat4 = cameraRepository.getOne(4).getCoordinate();
 
-        List<DensityEntity> densitiesOfCamera1 = densityRepository.getDensityEntitiesWithinMinutesByCamera_Id(1, 10);
-        List<DensityEntity> densitiesOfCamera2 = densityRepository.getDensityEntitiesWithinMinutesByCamera_Id(2, 10);
-        List<DensityEntity> densitiesOfCamera3 = densityRepository.getDensityEntitiesWithinMinutesByCamera_Id(3, 10);
-        List<DensityEntity> densitiesOfCamera4 = densityRepository.getDensityEntitiesWithinMinutesByCamera_Id(4, 10);
+        List<DensityEntity> densitiesOfCamera1 = densityRepository.getDensityEntitiesWithinMinutesByCamera_Id(1, 1011);
+        List<DensityEntity> densitiesOfCamera2 = densityRepository.getDensityEntitiesWithinMinutesByCamera_Id(2, 1011);
+        List<DensityEntity> densitiesOfCamera3 = densityRepository.getDensityEntitiesWithinMinutesByCamera_Id(3, 1011);
+        List<DensityEntity> densitiesOfCamera4 = densityRepository.getDensityEntitiesWithinMinutesByCamera_Id(4, 1011);
 
         if(densitiesOfCamera1.size() >= 1){
             DensityEntity densityEntity1 = densitiesOfCamera1.get(0);
@@ -86,7 +86,7 @@ public class MapController {
                 level = 13;
             }
             else if(density < 65 && density >= 40){
-                level = 3;
+                level = 5;
             }
         }
 
@@ -98,7 +98,7 @@ public class MapController {
                 level = 13;
             }
             else if(density < 50 && density >= 35){
-                level = 3;
+                level = 5;
             }
         }
 
@@ -110,7 +110,7 @@ public class MapController {
                 level = 13;
             }
             else if(density < 50 && density >= 35){
-                level = 3;
+                level = 5;
             }
         }
 
@@ -122,7 +122,7 @@ public class MapController {
                 level = 13;
             }
             else if(density < 40 && density >= 25){
-                level = 3;
+                level = 5;
             }
         }
         return level;

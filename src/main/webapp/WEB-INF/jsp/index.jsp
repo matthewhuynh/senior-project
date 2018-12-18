@@ -20,80 +20,81 @@
     <script src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <style>
-        @media only screen and (min-width: 992px) {
-            html, body {
-                height: 100%;
-            }
-            #map {
-                height: 94.5%;
-            }
-            #submit{
-                width: 80px;
-                text-align: center;
-                font-weight: bold;
-            }
-
-            #floating-panel {
-                position: absolute;
-                width: 300px;
-                top: 56px;
-                left: 9px;
-                z-index: 5;
-                background-color: #fff;
-                padding: 5px;
-                border: 1px solid #999;
-                text-align: center;
-                font-family: 'Roboto','sans-serif';
-                line-height: 20px;
-                padding-left: 5px;
-                display: none;
-            }
-            .navbar .container-fluid>.navbar-header {
-                float: left;
-                margin-right: 10px;
-            }
-            .navbar .navbar-nav {
-                float: left;
-            }
-            .nav>li > a{
-                float: left;
-            }
-            #find{
-                font-size: 16px;
-                margin-top: 7px;
-            }
-
+        /*@media only screen and (min-width: 992px) {*/
+        html, body {
+            height: 100%;
         }
-        @media only screen and (max-width: 991px) and (min-width: 769px) {
-            #map {
-                height: 94.5%;
-            }
-            #find{
-                margin-top: 7px;
-                font-size:16px;
-            }
+        #map {
+            height: 94.5%;
+            margin-top: -20px;
+        }
+        #submit{
+            width: 80px;
+            text-align: center;
+            font-weight: bold;
         }
 
-        @media only screen and (max-width: 768px) {
-            /* For mobile phones: */
-            #find{
-                font-size:16px;
-            }
-            #map {
-                height: 94.5%;
-            }
+        #floating-panel {
+            position: absolute;
+            width: 300px;
+            top: 56px;
+            left: 9px;
+            z-index: 5;
+            background-color: #fff;
+            padding: 5px;
+            border: 1px solid #999;
+            text-align: center;
+            font-family: 'Roboto','sans-serif';
+            line-height: 20px;
+            padding-left: 5px;
+            display: none;
         }
-        @media only screen and (max-width: 600px) {
-            #find{
-                font-size:13px;
-            }
-            #map {
-                height: 95%;
-            }
-            .navbar-brand{
-                font-size: 15px;
-            }
+        .navbar .container-fluid>.navbar-header {
+            float: left;
+            margin-right: 10px;
         }
+        .navbar .navbar-nav {
+            float: left;
+        }
+        .nav>li > a{
+            float: left;
+        }
+        #find{
+            font-size: 16px;
+            margin-top: 7px;
+        }
+
+        /*}*/
+        /*@media only screen and (max-width: 991px) and (min-width: 769px) {*/
+            /*#map {*/
+                /*height: 94.5%;*/
+            /*}*/
+            /*#find{*/
+                /*margin-top: 7px;*/
+                /*font-size:16px;*/
+            /*}*/
+        /*}*/
+
+        /*@media only screen and (max-width: 768px) {*/
+            /*!* For mobile phones: *!*/
+            /*#find{*/
+                /*font-size:16px;*/
+            /*}*/
+            /*#map {*/
+                /*height: 100%;*/
+            /*}*/
+        /*}*/
+        /*@media only screen and (max-width: 600px) {*/
+            /*#find{*/
+                /*font-size:13px;*/
+            /*}*/
+            /*#map {*/
+                /*height: 95%;*/
+            /*}*/
+            /*.navbar-brand{*/
+                /*font-size: 15px;*/
+            /*}*/
+        /*}*/
 
     </style>
 </head>
