@@ -130,6 +130,7 @@
         }
     }
     function initMap() {
+        var pointJams = [];
         document.getElementById("find").click();
         var directionsService = new google.maps.DirectionsService;
         var directionsDisplay = new google.maps.DirectionsRenderer;
@@ -221,12 +222,13 @@
         });
 
         document.getElementById('submit').addEventListener('click', function () {
-            calculateAndDisplayRoute(directionsService, map, routesPass, routesNotPass, routes, paths);
+            calculateAndDisplayRoute(directionsService, map, routesPass, routesNotPass, routes, paths, pointJams);
         });
 
         var refreshHeatMap = setInterval( function()
         {
             var points = [];
+            pointJams = [];
             $.ajax({
                 type: "POST",
                 url: "/getDensity",
@@ -234,7 +236,21 @@
                     for (var key in data){
                         var latlng = key.split(",");
                         points.push({location: new google.maps.LatLng(Number(latlng[0]), Number(latlng[1])), weight: data[key]});
+                        if(key ==  "10.77910990730577,106.70211961336622" && data[key] >= 13){
+                            pointJams.push(new google.maps.LatLng(10.779065114294985, 106.70207401581297));
+                        }
+                        else if(key ===  "10.820837625437557,106.6939700565506" && data[key] >= 13){
+                            pointJams.push(new google.maps.LatLng(10.82084026010509, 106.69395195148627));//phan van tri
+
+                        }
+                        else if(key ===  "10.756467508352271,106.68520560331831" && data[key] >= 13){
+                            pointJams.push(new google.maps.LatLng(10.756480354521894, 106.68511105529706),new google.maps.LatLng(10.756429958448201, 106.68526025332699));//tran hung dao
+                        }
+                        else if(key ===  "10.800978639350589,106.66188916035185" && data[key] >= 13){
+                            pointJams.push(new google.maps.LatLng(10.800814959119283, 106.66173560388575));//tran quoc hoang
+                        }
                     }
+                    console.log(pointJams);
                     heatmap.setOptions({
                         data: points,
                         map: map
@@ -244,12 +260,12 @@
                     heatmap.setMap(null);
                 }
             });
-            console.log(points);
+
         }, 5000);
     }
 
 
-    function calculateAndDisplayRoute(directionsService, map, routesPass, routesNotPass, routes, paths) {
+    function calculateAndDisplayRoute(directionsService, map, routesPass, routesNotPass, routes, paths, pointJams) {
         routesPass.setMap(null);
         routesNotPass.setMap(null);
         routes.setMap(null);
@@ -260,29 +276,32 @@
             provideRouteAlternatives: true
         }, function(response, status) {
             if (status === 'OK') {
-                var pointJams = getPointJams();
+                // var pointJams = getPointJams();
                 var pointJamsNow = [];
                 var pointNotJams = [];
-                for (var i = 0; i< response.routes.length; i++) {
-                    paths.setOptions({
-                        strokeWeight: 0,
-                        path: response.routes[i].overview_path
-                    });
+                for(var j = 0; j < pointJams.length; j++) {
+                    for (var i = 0; i< response.routes.length; i++) {
+                        paths.setOptions({
+                            strokeWeight: 0,
+                            path: response.routes[i].overview_path
+                        });
 
-                    for(var j = 0; j < pointJams.length; j++) {
                         if(google.maps.geometry.poly.isLocationOnEdge(pointJams[j], paths, 10e-5)){
-                            if(pointJamsNow[pointJamsNow.length -1] !== i){
+                            if(!pointJamsNow.includes(i)){
                                 pointJamsNow.push(i);
-                            }
-                        }
-                        else{
-                            if(pointNotJams[pointNotJams.length -1] !== i){
-                                pointNotJams.push(i);
                             }
                         }
                     }
                 }
-                pointNotJams = diffArray(pointJamsNow, pointNotJams);
+                for (var k = 0; k < response.routes.length; k++){
+                    if(!pointJamsNow.includes(k)){
+                        if(!pointNotJams.includes(k)){
+                            pointNotJams.push(k);
+                        }
+                    }
+                }
+
+                //pointNotJams = diffArray(pointJamsNow, pointNotJams);
                 if(pointJamsNow.length >= 2 && pointNotJams.length >= 0){
                     routesNotPass.setOptions({
                         directions: response,
@@ -414,14 +433,27 @@
         }
     }
 
-    function getPointJams(){
-        return [
-            new google.maps.LatLng(10.779065114294985, 106.70207401581297),//ly tu trong 2 ba trung
-            new google.maps.LatLng(10.82084026010509, 106.69395195148627),//phan van tri
-            new google.maps.LatLng(10.756480354521894, 106.68511105529706),//tran hung dao
-            new google.maps.LatLng(10.756429958448201, 106.68526025332699),//tran hung dao
-            new google.maps.LatLng(10.800814959119283, 106.66173560388575)//tran quoc hoang
-        ];
+    function getPointJams(lat, pointJams){
+        if(lat ===  10.77910990730577){
+            pointJams.push(new google.maps.LatLng(10.779065114294985, 106.70207401581297));
+        }
+        else if (lat ===  10.820837625437557){
+            pointJams.push(new google.maps.LatLng(10.82084026010509, 106.69395195148627));//phan van tri
+        }
+        else if (lat ===  10.756467508352271){
+            pointJams.push(new google.maps.LatLng(10.756480354521894, 106.68511105529706),new google.maps.LatLng(10.756429958448201, 106.68526025332699));//tran hung dao
+        }
+        else{
+            pointJams.push(new google.maps.LatLng(10.800814959119283, 106.66173560388575));//tran quoc hoang
+        }
+        return pointJams;
+        // return [
+        //     new google.maps.LatLng(10.779065114294985, 106.70207401581297),//ly tu trong 2 ba trung
+        //     new google.maps.LatLng(10.82084026010509, 106.69395195148627),//phan van tri
+        //     new google.maps.LatLng(10.756480354521894, 106.68511105529706),//tran hung dao
+        //     new google.maps.LatLng(10.756429958448201, 106.68526025332699),//tran hung dao
+        //     new google.maps.LatLng(10.800814959119283, 106.66173560388575)//tran quoc hoang
+        // ];
     }
 
     function getPointsHeatMap() {
